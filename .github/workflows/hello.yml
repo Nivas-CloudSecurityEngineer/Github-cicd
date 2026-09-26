@@ -13,16 +13,16 @@ jobs:
           docker run -d -p 8080:80 --name my-nginx nginx:alpine
           sleep 3
 
-      - name: Download and Run ngrok Binary Directly
+      - name: Install ngrok and Expose Port
         run: |
-          # 1. Download the official Linux archive directly
-          curl -sSOL https://equinox.io
+          # 1. Download the actual Linux binary package from ngrok CDN
+          curl -s https://equinox.io -o ngrok.tgz
           
-          # 2. Extract it into a globally accessible location (/usr/local/bin)
-          sudo tar -xzf ngrok-v3-stable-linux-amd64.tgz -C /usr/local/bin
+          # 2. Extract the file contents directly into the local binary execution path
+          sudo tar -xzf ngrok.tgz -C /usr/local/bin
           
-          # 3. Clean up the downloaded archive
-          rm ngrok-v3-stable-linux-amd64.tgz
+          # 3. Delete the temporary archive file
+          rm ngrok.tgz
           
-          # 4. Start the tunnel on port 8080
+          # 4. Fire up the public tunnel on port 8080
           ngrok http 8080 --log=stdout
