@@ -13,14 +13,16 @@ jobs:
           docker run -d -p 8080:80 --name my-nginx nginx:alpine
           sleep 3
 
-      - name: Expose Nginx via ngrok URL
+      - name: Download and Run ngrok Binary Directly
         run: |
-          # 1. Install official ngrok repository and signing keys via official script
-          curl -s https://amazonaws.com | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
-          echo "deb https://amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+          # 1. Download the official Linux archive directly
+          curl -sSOL https://equinox.io
           
-          # 2. Update and install the ngrok binary safely
-          sudo apt-get update && sudo apt-get install ngrok -y
+          # 2. Extract it into a globally accessible location (/usr/local/bin)
+          sudo tar -xzf ngrok-v3-stable-linux-amd64.tgz -C /usr/local/bin
           
-          # 3. Start the tunnel on port 8080
+          # 3. Clean up the downloaded archive
+          rm ngrok-v3-stable-linux-amd64.tgz
+          
+          # 4. Start the tunnel on port 8080
           ngrok http 8080 --log=stdout
