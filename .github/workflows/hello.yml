@@ -15,15 +15,12 @@ jobs:
 
       - name: Expose Nginx via ngrok URL
         run: |
-          # 1. Create the correct keyrings directory
-          sudo mkdir -p /etc/apt/keyrings
+          # 1. Install official ngrok repository and signing keys via official script
+          curl -s https://amazonaws.com | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+          echo "deb https://amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
           
-          # 2. Download official ngrok signing key and add repository
-          curl -s https://amazonaws.com | sudo tee /etc/apt/keyrings/ngrok.asc >/dev/null
-          echo "deb [signed-by=/etc/apt/keyrings/ngrok.asc] https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+          # 2. Update and install the ngrok binary safely
+          sudo apt-get update && sudo apt-get install ngrok -y
           
-          # 3. Update packages and install ngrok
-          sudo apt-get update && sudo apt-get install ngrok
-          
-          # 4. Start the tunnel on port 8080
+          # 3. Start the tunnel on port 8080
           ngrok http 8080 --log=stdout
