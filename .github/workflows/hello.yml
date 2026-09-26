@@ -1,12 +1,23 @@
-name: Learn Github Actions
+name: Run Nginx
 
 on:
   workflow_dispatch:
 
 jobs:
-  hello:  
+  nginx:  
     runs-on: ubuntu-latest
 
     steps:
-      - name: Hello
-        run: echo "Hello World"
+      - name: Start Nginx Container
+        run: |
+          docker run -d -p 8080:80 --name my-nginx nginx:alpine
+          sleep 3
+
+      - name: Expose Nginx via ngrok URL
+        run: |
+          curl -s https://amazonaws.com | sudo tee /etc/auth/keyrings/ngrok.asc >/dev/null
+          echo "deb [signed-by=/etc/auth/keyrings/ngrok.asc] https://amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+          sudo apt-get update && sudo apt-get install ngrok
+          
+          # Starts ngrok tunnel on port 8080 and displays the public URL
+          ngrok http 8080 --log=stdout
