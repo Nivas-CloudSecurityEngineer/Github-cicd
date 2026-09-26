@@ -13,16 +13,10 @@ jobs:
           docker run -d -p 8080:80 --name my-nginx nginx:alpine
           sleep 3
 
-      - name: Install ngrok and Expose Port
+      - name: Expose Nginx via Public URL
         run: |
-          # 1. Download the actual Linux binary package from ngrok CDN
-          curl -s https://equinox.io -o ngrok.tgz
+          # 1. Install localtunnel globally using npm (pre-installed on the runner)
+          sudo npm install -g localtunnel
           
-          # 2. Extract the file contents directly into the local binary execution path
-          sudo tar -xzf ngrok.tgz -C /usr/local/bin
-          
-          # 3. Delete the temporary archive file
-          rm ngrok.tgz
-          
-          # 4. Fire up the public tunnel on port 8080
-          ngrok http 8080 --log=stdout
+          # 2. Expose port 8080 to the internet
+          lt --port 8080
